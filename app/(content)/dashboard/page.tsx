@@ -1,7 +1,10 @@
+import RopaCard from "@/features/dashboard/RopaCard";
+import AccesorioCard from "@/features/dashboard/AccesorioCard";
 export default function DashboardPage() {
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-semibold">Dashboard</h1>
+    <div className="flex justify-center gap-6 mt-10 flex-wrap">
+      <RopaCard/>
+      <AccesorioCard/>
     </div>
   );
 }
