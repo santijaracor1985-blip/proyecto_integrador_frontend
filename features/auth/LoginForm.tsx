@@ -17,7 +17,7 @@ export default function LoginForm() {
       <div className="bg-white/20 backdrop-blur-lg shadow-2xl rounded-2xl p-10 w-full max-w-md border border-white/30">
 
         <h2 className="text-3xl font-bold text-white text-center mb-6 drop-shadow">
-          Iniciar Sesión
+          Registrate
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-5">
@@ -62,3 +62,5 @@ export default function LoginForm() {
     </div>
   );
 }
+
+

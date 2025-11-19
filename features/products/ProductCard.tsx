@@ -1,11 +1,21 @@
-import { Product } from "../../types/product";
+"use client";
 
-export default function ProductCard({ product }: { product: Product }) {
+interface Props {
+  title: string;
+  image: string;
+}
+
+export default function ProductCard({ title, image }: Props) {
   return (
-    <div className="rounded border p-4">
-      <h3 className="font-semibold">{product.name}</h3>
-      <p className="text-sm">{product.description}</p>
-      <p className="mt-2 font-medium">${product.price}</p>
+    <div className="bg-white rounded-2xl shadow p-5 hover:shadow-xl transition">
+
+      <img
+        src={image}
+        alt={title}
+        className="w-full h-64 object-cover rounded-xl"
+      />
+
+      <h2 className="text-xl font-bold mt-4">{title}</h2>
     </div>
   );
 }
