@@ -7,7 +7,7 @@ export default function Navbar() {
         
         
         <Link href="/" className="text-2xl font-semibold text-gray-900 dark:text-white">
-          MiTienda
+          Luxe Style
         </Link>
 
         
