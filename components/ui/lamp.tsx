@@ -34,9 +34,16 @@ export const LampContainer = ({
   return (
     <div
       className={cn(
-        "relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-slate-950 w-full rounded-md z-0",
+        "relative flex min-h-screen flex-col items-center justify-center overflow-hidden w-full rounded-md z-0",
         className
       )}
+      style={{
+        backgroundImage:
+          'url("https://p4.wallpaperbetter.com/wallpaper/940/466/460/simple-wallpaper-preview.jpg")',
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+      }}
     >
       {/* ... todo tu código original ... */}
       {children}
