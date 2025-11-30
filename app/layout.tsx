@@ -5,7 +5,7 @@ import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs"; 
 
 import ResizableNavbar from "@/components/ui/resizable-navbar";
-import Lamp from "@/components/ui/lamp";
+
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
@@ -22,7 +22,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
 
           {/* ⭐ LAMP GLOBAL */}
-          <Lamp />
+        
 
           {/* ⭐ NAVBAR GLOBAL */}
           <ResizableNavbar />
