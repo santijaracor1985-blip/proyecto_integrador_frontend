@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { motion, useScroll, useMotionValueEvent } from "framer-motion";
 import {
   IconMenu2,
@@ -15,6 +16,7 @@ export default function ResizableNavbar() {
   const [small, setSmall] = useState(false);
   const [search, setSearch] = useState("");
 
+  const router = useRouter();
   const { scrollY } = useScroll();
 
   useMotionValueEvent(scrollY, "change", (y) => {
@@ -27,27 +29,35 @@ export default function ResizableNavbar() {
     { name: "Mujer", link: "/mujer" },
   ];
 
+  const handleSearch = (e: any) => {
+    if (e.key === "Enter" && search.trim()) {
+      router.push(`/buscar?query=${encodeURIComponent(search.trim())}`);
+      setSearch("");
+    }
+  };
+
   return (
     <motion.nav
-      animate={{
-        height: small ? 60 : 100,
-        paddingTop: small ? 6 : 16,
-        paddingBottom: small ? 6 : 16,
-        backdropFilter: "blur(14px)",
-        backgroundColor: small
-          ? "rgba(255,255,255,0.45)"
-          : "rgba(255,255,255,0.65)",
-      }}
-      transition={{ type: "spring", stiffness: 130, damping: 20 }}
-      className="
-        fixed top-0 left-0 w-full z-50 
-        border-b border-white/20 dark:border-gray-800
-        shadow-lg shadow-black/5
-        flex items-center px-6 justify-between
-        dark:bg-black/40
-      "
-    >
-      {/* ⭐ LOGO */}
+  animate={{
+    height: small ? 60 : 100,
+    paddingTop: small ? 6 : 16,
+    paddingBottom: small ? 6 : 16,
+    backdropFilter: "blur(14px)",
+    backgroundColor: small
+      ? "rgba(255,255,255,0.35)"
+      : "rgba(255,255,255,0.6)",
+  }}
+  transition={{ type: "spring", stiffness: 130, damping: 20 }}
+  className="
+    sticky top-0 left-0 w-full z-50 
+    border-b border-white/20 dark:border-gray-800
+    shadow-lg shadow-black/5
+    flex items-center px-10 justify-between
+    font-[Playfair_Display]
+  "
+>
+
+      {/* LOGO */}
       <Link href="/" className="flex items-center">
         <img
           src="https://www.sosocial.net.au/wp-content/uploads/2017/02/Luxe-Logo-Design.png"
@@ -59,105 +69,118 @@ export default function ResizableNavbar() {
         />
       </Link>
 
-      {/* ⭐ MENÚ DESKTOP */}
-      <div className="hidden md:flex items-center gap-8 font-medium text-gray-700 dark:text-gray-300">
+      {/* MENÚ DESKTOP */}
+      <div className="hidden md:flex items-center gap-12">
 
-        {/* Links */}
         {navItems.map((item) => (
-          <Link
+          <motion.div
             key={item.link}
-            href={item.link}
-            className="
-              relative group cursor-pointer transition
-              hover:text-black dark:hover:text-white
-            "
+            whileHover={{
+              y: -4,
+              scale: 1.08,
+              rotate: -0.4,
+              opacity: 0.95,
+              transition: { type: "spring", stiffness: 250 },
+            }}
           >
-            {item.name}
-
-            {/* Línea animada */}
-            <span
+            <Link
+              href={item.link}
               className="
-                absolute left-0 -bottom-1 h-[2px] bg-blue-600
-                w-0 group-hover:w-full transition-all duration-300
-                rounded-full
+                text-gray-800 dark:text-gray-200
+                text-lg tracking-wide font-semibold
+                transition-all duration-300
               "
-            />
-          </Link>
+            >
+              {item.name}
+            </Link>
+          </motion.div>
         ))}
 
-        {/* ⭐ Barra de búsqueda */}
-        <div
+        {/* Búsqueda con animación */}
+        <motion.div
+          whileFocus={{ scale: 1.05 }}
           className="
-            relative flex items-center
-            bg-white/70 dark:bg-gray-800/70
+            flex items-center gap-2
+            bg-white/60 dark:bg-gray-800/60
             border border-gray-300 dark:border-gray-600
-            rounded-full px-3 py-1.5
-            shadow-sm backdrop-blur
+            rounded-full px-4 py-1.5 shadow-sm backdrop-blur
+            transition-all duration-300
           "
         >
           <IconSearch size={18} className="text-gray-500" />
           <input
             type="text"
             placeholder="Buscar..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            onKeyDown={handleSearch}
             className="
-              bg-transparent outline-none ml-2 w-40
-              text-sm text-gray-700 dark:text-gray-200
+              bg-transparent outline-none w-40
+              text-gray-700 dark:text-gray-200
             "
           />
-        </div>
+        </motion.div>
 
-        {/* 🛒 CARRITO */}
-        <Link
-          href="/carrito"
-          className="hover:text-black dark:hover:text-white transition"
-        >
-          <IconShoppingCart size={28} />
-        </Link>
+        {/* CARRITO */}
+        <motion.div whileHover={{ scale: 1.1 }}>
+          <Link
+            href="/carrito"
+            className="hover:text-black dark:hover:text-white transition"
+          >
+            <IconShoppingCart size={28} />
+          </Link>
+        </motion.div>
 
         {/* LOGIN */}
-        <Link
-          href="/login"
-          className="
-            px-5 py-2 rounded-full 
-            bg-gradient-to-r from-black to-gray-800 
-            text-white font-semibold shadow-md
-            hover:shadow-xl hover:scale-105 active:scale-95
-            transition-all duration-300
-            dark:from-white dark:to-gray-300 dark:text-black
-          "
-        >
-          Login
-        </Link>
+        <motion.div whileHover={{ scale: 1.05 }}>
+          <Link
+            href="/login"
+            className="
+              px-6 py-2 rounded-full 
+              bg-black text-white font-semibold
+              dark:bg-white dark:text-black
+              shadow-md hover:shadow-xl transition-all duration-300
+            "
+          >
+            Login
+          </Link>
+        </motion.div>
       </div>
 
-      {/* ⭐ BOTÓN MÓVIL */}
+      {/* BOTÓN MÓVIL */}
       <button onClick={() => setOpen(!open)} className="md:hidden">
         {open ? <IconX size={30} /> : <IconMenu2 size={30} />}
       </button>
 
-      {/* ⭐ MENÚ MÓVIL */}
+      {/* MENÚ MOVIL */}
       {open && (
         <motion.div
           initial={{ opacity: 0, y: -12 }}
           animate={{ opacity: 1, y: 0 }}
           className="
             absolute top-full left-0 w-full 
-            bg-white/85 dark:bg-black/85
+            bg-white/90 dark:bg-black/90
             backdrop-blur-xl shadow-xl
             px-6 py-5 flex flex-col gap-4
+            font-[Playfair_Display]
           "
         >
           {navItems.map((item) => (
-            <Link
+            <motion.div
               key={item.link}
-              href={item.link}
-              onClick={() => setOpen(false)}
-              className="
-                text-lg border-b pb-2 border-gray-300 dark:border-gray-700
-              "
+              whileHover={{ x: 6, opacity: 0.9 }}
             >
-              {item.name}
-            </Link>
+              <Link
+                href={item.link}
+                onClick={() => setOpen(false)}
+                className="
+                  text-xl border-b pb-2 border-gray-300 dark:border-gray-700
+                  font-semibold tracking-wide
+                "
+              >
+                {item.name}
+              </Link>
+            </motion.div>
           ))}
 
           {/* Busqueda móvil */}
@@ -171,8 +194,12 @@ export default function ResizableNavbar() {
             <input
               type="text"
               placeholder="Buscar..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              onKeyDown={handleSearch}
               className="
-                bg-transparent outline-none ml-2 text-gray-700 dark:text-gray-200 w-full
+                bg-transparent outline-none ml-2 w-full
+                text-gray-700 dark:text-gray-200
               "
             />
           </div>

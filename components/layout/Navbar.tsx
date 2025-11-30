@@ -101,7 +101,6 @@ export default function Navbar() {
           {open ? <IconX size={28} color="white" /> : <IconMenu2 size={28} color="white" />}
         </button>
       </div>
-
       {/* MOBILE MENU */}
       {open && (
         <div className="md:hidden bg-black/60 backdrop-blur-xl px-6 py-4 flex flex-col gap-4 text-white">
