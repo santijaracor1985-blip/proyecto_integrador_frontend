@@ -61,7 +61,8 @@ export default function ProductCarousel() {
 
   return (
     <div className="mt-14 w-full">
-      <h2 className="text-2xl font-bold mb-6 text-center">
+      <h2 className="text-2xl font-bold mb-6 text-center text-white drop-shadow-lg">
+
         LO PROXIMO EN LUXE STYLE 🔥✔️
       </h2>
 
