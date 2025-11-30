@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
+import { ClerkProvider } from "@clerk/nextjs"; 
+
 import ResizableNavbar from "@/components/ui/resizable-navbar";
-import Lamp from "@/components/ui/lamp"; // 👈 IMPORT CORRECTO
+import Lamp from "@/components/ui/lamp";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
@@ -15,19 +17,21 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="es">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+    <ClerkProvider>   {/* ⭐ ENVUELVE TODA LA APP CON CLERK */}
+      <html lang="es">
+        <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
 
-        {/* 👇 LAMP DE FONDO GLOBAL */}
-        <Lamp />
+          {/* ⭐ LAMP GLOBAL */}
+          <Lamp />
 
-        {/* ⭐ NAVBAR GLOBAL */}
-        <ResizableNavbar />
+          {/* ⭐ NAVBAR GLOBAL */}
+          <ResizableNavbar />
 
-        {/* ⭐ CONTENIDO DE LA PÁGINA */}
-        {children}
+          {/* ⭐ CONTENIDO DE CADA PÁGINA */}
+          {children}
 
-      </body>
-    </html>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }
