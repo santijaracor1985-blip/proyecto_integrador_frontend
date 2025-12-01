@@ -1,6 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
 import { cartService } from "@/services/CartService";
+import { useRouter } from "next/navigation";
+import { IconCheck, IconX, IconShoppingCart } from "@tabler/icons-react"; // Añadir iconos para mejor estética
 
 interface CustomerData {
     name: string;
@@ -9,6 +11,62 @@ interface CustomerData {
     address: string;
     country: string;
 }
+
+// Componente Modal de Éxito
+const SuccessModal = ({ isOpen, onClose, orderDetails }: { isOpen: boolean, onClose: () => void, orderDetails: any }) => {
+    if (!isOpen) return null;
+
+    return (
+        // Fondo oscuro y centrador (Overlay)
+        <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4 animate-fadeIn">
+            {/* Contenedor del Modal */}
+            <div className="bg-white rounded-xl shadow-2xl max-w-lg w-full p-8 relative transform transition-all animate-scaleUp">
+                
+                {/* Botón de cerrar */}
+                <button
+                    onClick={onClose}
+                    className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition"
+                    aria-label="Cerrar modal"
+                >
+                    <IconX size={24} />
+                </button>
+
+                {/* Ícono y Título */}
+                <div className="text-center mb-6">
+                    <IconCheck size={60} className="text-green-500 mx-auto mb-4 p-2 bg-green-100 rounded-full" />
+                    <h2 className="text-3xl font-bold text-gray-800">¡Pedido Realizado con Éxito!</h2>
+                    <p className="text-gray-500 mt-2">Tu orden ha sido procesada y será enviada pronto.</p>
+                </div>
+
+                {/* Resumen del pedido */}
+                <div className="bg-gray-50 p-4 rounded-lg mb-6 border border-gray-200">
+                    <h3 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">Resumen de la Orden</h3>
+                    <p className="text-sm text-gray-600 mb-1">
+                        <span className="font-medium text-gray-800">Cliente:</span> {orderDetails.customer.name}
+                    </p>
+                    <p className="text-sm text-gray-600 mb-1">
+                        <span className="font-medium text-gray-800">Total:</span> ${orderDetails.total.toFixed(2)}
+                    </p>
+                    <p className="text-sm text-gray-600 mb-1">
+                        <span className="font-medium text-gray-800">Dirección:</span> {orderDetails.customer.address}, {orderDetails.customer.country}
+                    </p>
+                </div>
+
+                {/* Botón de acción */}
+                <div className="flex justify-center">
+                    <button
+                        onClick={onClose}
+                        className="bg-indigo-600 text-white font-semibold py-3 px-8 rounded-full hover:bg-indigo-700 transition shadow-lg shadow-indigo-500/50"
+                    >
+                        Continuar Comprando
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    );
+};
+
 
 export default function CarritoPage() {
     const [cart, setCart] = useState<any[]>([]);
@@ -19,6 +77,9 @@ export default function CarritoPage() {
         address: "",
         country: "",
     });
+    const [showSuccessModal, setShowSuccessModal] = useState(false); // Estado para el modal
+    const [errorMessage, setErrorMessage] = useState<string | null>(null); // Estado para mensajes de error
+    const [orderDetails, setOrderDetails] = useState<any>(null); // Estado para guardar los detalles de la orden
 
     useEffect(() => {
         setCart(cartService.getCart());
@@ -39,90 +100,129 @@ export default function CarritoPage() {
 
     const handleCheckout = (e: React.FormEvent) => {
         e.preventDefault();
+        setErrorMessage(null); // Limpiar errores anteriores
 
         if (cart.length === 0) {
-            alert("Tu carrito está vacío. Agrega productos antes de realizar un pedido.");
+            // Reemplazar alert() con un mensaje de error en la UI
+            setErrorMessage("Tu carrito está vacío. Agrega productos antes de realizar un pedido.");
             return;
         }
 
-        const orderDetails = {
+        const totalAmount = cart.reduce((sum, item) => sum + item.price, 0);
+
+        const newOrderDetails = {
             customer: customerData,
-            products: cart,
-            total: cart.reduce((sum, item) => sum + item.price, 0),
+            items: cart.map(item => ({ id: item.id, title: item.title, price: item.price })),
+            total: totalAmount,
             date: new Date().toISOString(),
         };
 
-        console.log("Datos del Pedido a Enviar:", orderDetails);
-        
-        alert(
-            `¡Pedido realizado con éxito!\n\nDatos de Cliente:\nNombre: ${customerData.name}\nEmail: ${customerData.email}\nTeléfono: ${customerData.phone}\nPaís: ${customerData.country}\nTotal: $${orderDetails.total.toFixed(2)}`
-        );
+        // Simulación de envío de pedido
+        console.log("Pedido enviado:", newOrderDetails);
+        setOrderDetails(newOrderDetails);
+
+        // Mostrar el modal de éxito (reemplaza el alert original)
+        setShowSuccessModal(true);
+
+        // La limpieza del carrito y redirección se hará al cerrar el modal
+    };
+
+    const closeModal = () => {
+        setShowSuccessModal(false);
+        // Limpiar carrito y resetear datos después de cerrar el modal
+        cartService.clearCart();
+        setCart([]);
+        setCustomerData({
+            name: "",
+            email: "",
+            phone: "",
+            address: "",
+            country: "",
+        });
+        // Si desea redirigir a la página principal, descomentar:
+        // router.push('/');
     };
 
     const totalAmount = cart.reduce((sum, item) => sum + item.price, 0);
 
     return (
-        <div className="min-h-screen bg-gray-100 p-8">
-            <h1 className="text-4xl font-bold text-center mb-10 text-gray-800">
-                🛒 Carrito de Compras
+        <div className="min-h-screen bg-gray-50 py-10 px-4 sm:px-6 lg:px-8">
+            <h1 className="text-4xl font-extrabold text-center mb-10 text-gray-900 drop-shadow-sm">
+                Tu Carrito de Compras
             </h1>
 
-            {cart.length === 0 ? (
-                <p className="text-center text-gray-600 text-xl">
-                    Tu carrito está vacío. ¡Empieza a comprar!
-                </p>
-            ) : (
-                <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <div className="md:col-span-2 bg-white p-6 shadow-lg rounded-xl">
-                        <h2 className="text-2xl font-bold mb-4 border-b pb-2">Productos</h2>
-                        {cart.map((item) => (
-                            <div
-                                key={item.id}
-                                className="flex items-center justify-between border-b py-4 last:border-b-0"
-                            >
-                                <div className="flex items-center gap-4">
-                                    <img
-                                        src={item.image}
-                                        alt={item.title}
-                                        className="w-20 h-20 object-cover rounded-lg"
-                                    />
-                                    <div>
-                                        <h2 className="text-lg font-semibold">{item.title}</h2>
-                                        <p className="text-indigo-600 font-bold text-lg">
-                                            ${item.price.toFixed(2)} 
-                                        </p>
-                                    </div>
-                                </div>
+            {/* Mensaje de Error (para carrito vacío) */}
+            {errorMessage && (
+                <div className="max-w-4xl mx-auto bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-xl mb-6 flex justify-between items-center shadow-md animate-fadeDown">
+                    <p className="font-medium flex items-center">
+                        <IconX className="inline mr-2 size-5" />
+                        {errorMessage}
+                    </p>
+                    <button onClick={() => setErrorMessage(null)} className="text-red-700 hover:text-red-900">
+                        <IconX size={20} />
+                    </button>
+                </div>
+            )}
 
-                                <button
-                                    onClick={() => eliminarProducto(item.id)}
-                                    className="p-2 bg-red-600 text-white rounded-full hover:bg-red-700 transition flex items-center justify-center"
-                                    aria-label="Eliminar producto"
+
+            {cart.length === 0 ? (
+                <div className="max-w-4xl mx-auto text-center bg-white p-10 rounded-xl shadow-lg border-2 border-dashed border-gray-300">
+                    <IconShoppingCart size={60} className="text-gray-400 mx-auto mb-4" />
+                    <p className="text-xl font-semibold text-gray-600 mb-2">
+                        Tu carrito está vacío.
+                    </p>
+                    <p className="text-gray-500">
+                        ¡Parece que aún no has agregado ningún producto!
+                    </p>
+                </div>
+            ) : (
+                <div className="max-w-4xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    {/* Columna de Productos */}
+                    <div className="lg:col-span-2 bg-white p-6 rounded-xl shadow-lg h-fit">
+                        <h2 className="text-2xl font-semibold text-gray-800 mb-4 border-b pb-2">
+                            Productos ({cart.length})
+                        </h2>
+                        <div className="space-y-4">
+                            {cart.map((item, index) => (
+                                <div
+                                    key={index}
+                                    className="flex items-center justify-between p-3 border-b last:border-b-0"
                                 >
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        className="h-5 w-5"
-                                        viewBox="0 0 20 20"
-                                        fill="currentColor"
-                                    >
-                                        <path
-                                            fillRule="evenodd"
-                                            d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 011-1h4a1 1 0 110 2H8a1 1 0 01-1-1zm2 3a1 1 0 011-1h4a1 1 0 110 2H8a1 1 0 01-1-1z"
-                                            clipRule="evenodd"
+                                    <div className="flex items-center space-x-4">
+                                        <img
+                                            src={item.image || "https://placehold.co/80x80/cccccc/333333?text=Sin+Imagen"}
+                                            alt={item.title}
+                                            className="w-16 h-16 object-cover rounded-lg shadow-sm"
+                                            onError={(e) => {
+                                                (e.currentTarget as HTMLImageElement).src = "https://placehold.co/80x80/cccccc/333333?text=Sin+Imagen";
+                                            }}
                                         />
-                                    </svg>
-                                </button>
-                            </div>
-                        ))}
-                        <div className="mt-4 pt-4 border-t border-gray-200 flex justify-end">
-                            <p className="text-xl font-bold">
-                                Total: ${totalAmount.toFixed(2)}
-                            </p>
+                                        <div>
+                                            <p className="font-medium text-gray-800">{item.title}</p>
+                                            <p className="text-sm text-indigo-600 font-bold">${item.price.toFixed(2)}</p>
+                                        </div>
+                                    </div>
+                                    <button
+                                        onClick={() => eliminarProducto(item.id)}
+                                        className="text-red-500 hover:text-red-700 transition p-2 rounded-full hover:bg-red-50"
+                                        aria-label={`Eliminar ${item.title}`}
+                                    >
+                                        <IconX size={20} />
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                        <div className="mt-4 pt-4 border-t flex justify-between items-center">
+                            <p className="text-lg font-semibold text-gray-700">Total:</p>
+                            <p className="text-2xl font-extrabold text-indigo-700">${totalAmount.toFixed(2)}</p>
                         </div>
                     </div>
-                    
-                    <div className="md:col-span-1 bg-white p-6 shadow-lg rounded-xl h-fit">
-                        <h2 className="text-2xl font-bold mb-4 border-b pb-2">Datos para el Pedido</h2>
+
+                    {/* Columna de Checkout */}
+                    <div className="lg:col-span-1 bg-white p-6 rounded-xl shadow-lg">
+                        <h2 className="text-2xl font-semibold text-gray-800 mb-4 border-b pb-2">
+                            Datos de Envío
+                        </h2>
                         <form onSubmit={handleCheckout} className="space-y-4">
                             <div>
                                 <label htmlFor="name" className="block text-sm font-medium text-gray-700">
@@ -140,7 +240,7 @@ export default function CarritoPage() {
                             </div>
                             <div>
                                 <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                                    Email
+                                    Correo Electrónico
                                 </label>
                                 <input
                                     type="email"
@@ -154,7 +254,7 @@ export default function CarritoPage() {
                             </div>
                             <div>
                                 <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
-                                    Número de Teléfono
+                                    Teléfono
                                 </label>
                                 <input
                                     type="tel"
@@ -204,6 +304,15 @@ export default function CarritoPage() {
                         </form>
                     </div>
                 </div>
+            )}
+
+            {/* Modal de Éxito */}
+            {showSuccessModal && orderDetails && (
+                <SuccessModal 
+                    isOpen={showSuccessModal} 
+                    onClose={closeModal} 
+                    orderDetails={orderDetails} 
+                />
             )}
         </div>
     );
