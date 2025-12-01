@@ -84,7 +84,7 @@ export default function ProductCarousel() {
               </div>
             )}
             <h3 className="mt-3 text-lg font-semibold">{item.title}</h3>
-            <p className="text-gray-600 text-sm">${item.price}</p>
+            <p className="text-gray-600 text-sm">{item.price}</p>
           </div>
         ))}
       </div>
