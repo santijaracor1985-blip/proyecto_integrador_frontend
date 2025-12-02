@@ -1,17 +1,15 @@
 export default function Footer() {
   return (
-    <footer className="relative w-full bg-gradient-to-b from-black via-gray-950 to-black text-gray-300 pt-20 pb-10 mt-24 overflow-hidden">
-      
+    <footer className="relative w-full bg-gradient-to-b from-black via-gray-950 to-black text-gray-300 pt-20 pb-10 mt-0 overflow-hidden">
+
       {/* Luces decorativas */}
       <div className="absolute top-0 left-0 w-96 h-96 bg-purple-600/20 rounded-full blur-3xl"></div>
       <div className="absolute bottom-0 right-0 w-96 h-96 bg-pink-600/20 rounded-full blur-3xl"></div>
 
       <div className="relative max-w-7xl mx-auto px-6 z-10">
 
-        {/* GRID PRINCIPAL */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-14">
 
-          {/* BRAND */}
           <div className="space-y-4">
             <h2 className="text-4xl font-extrabold text-white tracking-wide">
               Luxe <span className="text-purple-500">Style</span>
@@ -22,7 +20,6 @@ export default function Footer() {
             </p>
           </div>
 
-          {/* LINKS */}
           <div className="flex flex-col space-y-4">
             <h3 className="text-xl font-semibold text-white mb-2 tracking-wide">
               Navegación
@@ -39,22 +36,19 @@ export default function Footer() {
             ))}
           </div>
 
-          {/* CONTACTO */}
           <div className="space-y-3">
             <h3 className="text-xl font-semibold text-white mb-2 tracking-wide">
               Contáctanos
             </h3>
-            <p className="text-gray-400">📧 contacto@luxestyle.co</p>
-            <p className="text-gray-400">📱 +57 300 000 0000</p>
+            <p className="text-gray-400">📧 luxestyle@hotmail.com</p>
+            <p className="text-gray-400">📱 +57 3153819451</p>
             <p className="text-gray-400">📍 Medellín, Colombia</p>
           </div>
 
         </div>
 
-        {/* Separator Glow */}
         <div className="w-full h-px bg-gradient-to-r from-transparent via-purple-500 to-transparent my-12"></div>
 
-        {/* BOTTOM */}
         <div className="flex flex-col md:flex-row justify-between items-center text-sm text-gray-400">
           <p>
             © {new Date().getFullYear()}{" "}

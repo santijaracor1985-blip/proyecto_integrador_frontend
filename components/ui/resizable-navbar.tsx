@@ -8,15 +8,12 @@ import {
   IconMenu2,
   IconX,
   IconShoppingCart,
-  IconSearch,
 } from "@tabler/icons-react";
 
 export default function ResizableNavbar() {
   const [open, setOpen] = useState(false);
   const [small, setSmall] = useState(false);
-  const [search, setSearch] = useState("");
 
-  const router = useRouter();
   const { scrollY } = useScroll();
 
   useMotionValueEvent(scrollY, "change", (y) => {
@@ -29,33 +26,26 @@ export default function ResizableNavbar() {
     { name: "Mujer", link: "/mujer" },
   ];
 
-  const handleSearch = (e: any) => {
-    if (e.key === "Enter" && search.trim()) {
-      router.push(`/buscar?query=${encodeURIComponent(search.trim())}`);
-      setSearch("");
-    }
-  };
-
   return (
     <motion.nav
-  animate={{
-    height: small ? 60 : 100,
-    paddingTop: small ? 6 : 16,
-    paddingBottom: small ? 6 : 16,
-    backdropFilter: "blur(14px)",
-    backgroundColor: small
-      ? "rgba(255,255,255,0.35)"
-      : "rgba(255,255,255,0.6)",
-  }}
-  transition={{ type: "spring", stiffness: 130, damping: 20 }}
-  className="
-    sticky top-0 left-0 w-full z-50 
-    border-b border-white/20 dark:border-gray-800
-    shadow-lg shadow-black/5
-    flex items-center px-10 justify-between
-    font-[Playfair_Display]
-  "
->
+      animate={{
+        height: small ? 60 : 100,
+        paddingTop: small ? 6 : 16,
+        paddingBottom: small ? 6 : 16,
+        backdropFilter: "blur(14px)",
+        backgroundColor: small
+          ? "rgba(255,255,255,0.35)"
+          : "rgba(255,255,255,0.6)",
+      }}
+      transition={{ type: "spring", stiffness: 130, damping: 20 }}
+      className="
+        sticky top-0 left-0 w-full z-50 
+        border-b border-white/20 dark:border-gray-800
+        shadow-lg shadow-black/5
+        flex items-center px-10 justify-between
+        font-[Playfair_Display]
+      "
+    >
 
       {/* LOGO */}
       <Link href="/" className="flex items-center">
@@ -71,7 +61,6 @@ export default function ResizableNavbar() {
 
       {/* MENÚ DESKTOP */}
       <div className="hidden md:flex items-center gap-12">
-
         {navItems.map((item) => (
           <motion.div
             key={item.link}
@@ -95,31 +84,6 @@ export default function ResizableNavbar() {
             </Link>
           </motion.div>
         ))}
-
-        {/* Búsqueda con animación */}
-        <motion.div
-          whileFocus={{ scale: 1.05 }}
-          className="
-            flex items-center gap-2
-            bg-white/60 dark:bg-gray-800/60
-            border border-gray-300 dark:border-gray-600
-            rounded-full px-4 py-1.5 shadow-sm backdrop-blur
-            transition-all duration-300
-          "
-        >
-          <IconSearch size={18} className="text-gray-500" />
-          <input
-            type="text"
-            placeholder="Buscar..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            onKeyDown={handleSearch}
-            className="
-              bg-transparent outline-none w-40
-              text-gray-700 dark:text-gray-200
-            "
-          />
-        </motion.div>
 
         {/* CARRITO */}
         <motion.div whileHover={{ scale: 1.1 }}>
@@ -182,27 +146,6 @@ export default function ResizableNavbar() {
               </Link>
             </motion.div>
           ))}
-
-          {/* Busqueda móvil */}
-          <div
-            className="
-              flex items-center bg-gray-200/60 dark:bg-gray-800/60
-              px-4 py-2 rounded-full mt-2
-            "
-          >
-            <IconSearch size={20} className="text-gray-600" />
-            <input
-              type="text"
-              placeholder="Buscar..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              onKeyDown={handleSearch}
-              className="
-                bg-transparent outline-none ml-2 w-full
-                text-gray-700 dark:text-gray-200
-              "
-            />
-          </div>
 
           <Link
             href="/carrito"
