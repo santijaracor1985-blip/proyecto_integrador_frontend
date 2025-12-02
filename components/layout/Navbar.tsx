@@ -27,15 +27,9 @@ export default function Navbar() {
 
   return (
     <nav
-      className="fixed top-0 w-full z-50 border-b border-white/20 dark:border-gray-700/40 shadow-lg shadow-black/10"
-      style={{
-        backgroundImage: `url("https://p4.wallpaperbetter.com/wallpaper/940/466/460/simple-wallpaper-preview.jpg")`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-      }}
+      className="fixed top-0 w-full z-50 border-b border-white/20 dark:border-gray-700/40 shadow-lg shadow-black/10 bg-black/40 backdrop-blur-xl"
     >
-      <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-4 backdrop-blur-xl bg-white/40 dark:bg-black/40">
+      <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
 
         {/* LOGO */}
         <Link
@@ -101,6 +95,7 @@ export default function Navbar() {
           {open ? <IconX size={28} color="white" /> : <IconMenu2 size={28} color="white" />}
         </button>
       </div>
+
       {/* MOBILE MENU */}
       {open && (
         <div className="md:hidden bg-black/60 backdrop-blur-xl px-6 py-4 flex flex-col gap-4 text-white">

@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { cartService } from "@/services/CartService";
 import { useRouter } from "next/navigation";
-import { IconCheck, IconX, IconShoppingCart } from "@tabler/icons-react"; // Añadir iconos para mejor estética
+import { IconCheck, IconX, IconShoppingCart } from "@tabler/icons-react";
 
 interface CustomerData {
     name: string;
@@ -12,17 +12,12 @@ interface CustomerData {
     country: string;
 }
 
-// Componente Modal de Éxito
 const SuccessModal = ({ isOpen, onClose, orderDetails }: { isOpen: boolean, onClose: () => void, orderDetails: any }) => {
     if (!isOpen) return null;
 
     return (
-        // Fondo oscuro y centrador (Overlay)
         <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4 animate-fadeIn">
-            {/* Contenedor del Modal */}
             <div className="bg-white rounded-xl shadow-2xl max-w-lg w-full p-8 relative transform transition-all animate-scaleUp">
-                
-                {/* Botón de cerrar */}
                 <button
                     onClick={onClose}
                     className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition"
@@ -31,14 +26,12 @@ const SuccessModal = ({ isOpen, onClose, orderDetails }: { isOpen: boolean, onCl
                     <IconX size={24} />
                 </button>
 
-                {/* Ícono y Título */}
                 <div className="text-center mb-6">
                     <IconCheck size={60} className="text-green-500 mx-auto mb-4 p-2 bg-green-100 rounded-full" />
                     <h2 className="text-3xl font-bold text-gray-800">¡Pedido Realizado con Éxito!</h2>
                     <p className="text-gray-500 mt-2">Tu orden ha sido procesada y será enviada pronto.</p>
                 </div>
 
-                {/* Resumen del pedido */}
                 <div className="bg-gray-50 p-4 rounded-lg mb-6 border border-gray-200">
                     <h3 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">Resumen de la Orden</h3>
                     <p className="text-sm text-gray-600 mb-1">
@@ -52,7 +45,6 @@ const SuccessModal = ({ isOpen, onClose, orderDetails }: { isOpen: boolean, onCl
                     </p>
                 </div>
 
-                {/* Botón de acción */}
                 <div className="flex justify-center">
                     <button
                         onClick={onClose}
@@ -77,9 +69,13 @@ export default function CarritoPage() {
         address: "",
         country: "",
     });
-    const [showSuccessModal, setShowSuccessModal] = useState(false); // Estado para el modal
-    const [errorMessage, setErrorMessage] = useState<string | null>(null); // Estado para mensajes de error
-    const [orderDetails, setOrderDetails] = useState<any>(null); // Estado para guardar los detalles de la orden
+    const [showSuccessModal, setShowSuccessModal] = useState(false); 
+    const [errorMessage, setErrorMessage] = useState<string | null>(null); 
+    const [orderDetails, setOrderDetails] = useState<any>(null);
+
+    const router = useRouter();
+
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     useEffect(() => {
         setCart(cartService.getCart());
@@ -100,10 +96,14 @@ export default function CarritoPage() {
 
     const handleCheckout = (e: React.FormEvent) => {
         e.preventDefault();
-        setErrorMessage(null); // Limpiar errores anteriores
+        setErrorMessage(null);
+
+        if (!isLoggedIn) {
+            router.push("/login");
+            return;
+        }
 
         if (cart.length === 0) {
-            // Reemplazar alert() con un mensaje de error en la UI
             setErrorMessage("Tu carrito está vacío. Agrega productos antes de realizar un pedido.");
             return;
         }
@@ -117,19 +117,12 @@ export default function CarritoPage() {
             date: new Date().toISOString(),
         };
 
-        // Simulación de envío de pedido
-        console.log("Pedido enviado:", newOrderDetails);
         setOrderDetails(newOrderDetails);
-
-        // Mostrar el modal de éxito (reemplaza el alert original)
         setShowSuccessModal(true);
-
-        // La limpieza del carrito y redirección se hará al cerrar el modal
     };
 
     const closeModal = () => {
         setShowSuccessModal(false);
-        // Limpiar carrito y resetear datos después de cerrar el modal
         cartService.clearCart();
         setCart([]);
         setCustomerData({
@@ -139,8 +132,6 @@ export default function CarritoPage() {
             address: "",
             country: "",
         });
-        // Si desea redirigir a la página principal, descomentar:
-        // router.push('/');
     };
 
     const totalAmount = cart.reduce((sum, item) => sum + item.price, 0);
@@ -151,7 +142,6 @@ export default function CarritoPage() {
                 Tu Carrito de Compras
             </h1>
 
-            {/* Mensaje de Error (para carrito vacío) */}
             {errorMessage && (
                 <div className="max-w-4xl mx-auto bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-xl mb-6 flex justify-between items-center shadow-md animate-fadeDown">
                     <p className="font-medium flex items-center">
@@ -163,7 +153,6 @@ export default function CarritoPage() {
                     </button>
                 </div>
             )}
-
 
             {cart.length === 0 ? (
                 <div className="max-w-4xl mx-auto text-center bg-white p-10 rounded-xl shadow-lg border-2 border-dashed border-gray-300">
@@ -177,11 +166,12 @@ export default function CarritoPage() {
                 </div>
             ) : (
                 <div className="max-w-4xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    {/* Columna de Productos */}
+                    
                     <div className="lg:col-span-2 bg-white p-6 rounded-xl shadow-lg h-fit">
                         <h2 className="text-2xl font-semibold text-gray-800 mb-4 border-b pb-2">
                             Productos ({cart.length})
                         </h2>
+
                         <div className="space-y-4">
                             {cart.map((item, index) => (
                                 <div
@@ -212,17 +202,19 @@ export default function CarritoPage() {
                                 </div>
                             ))}
                         </div>
+
                         <div className="mt-4 pt-4 border-t flex justify-between items-center">
                             <p className="text-lg font-semibold text-gray-700">Total:</p>
                             <p className="text-2xl font-extrabold text-indigo-700">${totalAmount.toFixed(2)}</p>
                         </div>
                     </div>
 
-                    {/* Columna de Checkout */}
-                    <div className="lg:col-span-1 bg-white p-6 rounded-xl shadow-lg">
+                    {/* 🔥 FIX APLICADO AQUÍ */}
+                    <div className="lg:col-span-1 bg-white p-6 rounded-xl shadow-lg h-fit self-start">
                         <h2 className="text-2xl font-semibold text-gray-800 mb-4 border-b pb-2">
                             Datos de Envío
                         </h2>
+
                         <form onSubmit={handleCheckout} className="space-y-4">
                             <div>
                                 <label htmlFor="name" className="block text-sm font-medium text-gray-700">
@@ -238,6 +230,7 @@ export default function CarritoPage() {
                                     className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                                 />
                             </div>
+
                             <div>
                                 <label htmlFor="email" className="block text-sm font-medium text-gray-700">
                                     Correo Electrónico
@@ -252,6 +245,7 @@ export default function CarritoPage() {
                                     className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                                 />
                             </div>
+
                             <div>
                                 <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
                                     Teléfono
@@ -266,6 +260,7 @@ export default function CarritoPage() {
                                     className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                                 />
                             </div>
+
                             <div>
                                 <label htmlFor="address" className="block text-sm font-medium text-gray-700">
                                     Dirección de Envío
@@ -280,6 +275,7 @@ export default function CarritoPage() {
                                     className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                                 />
                             </div>
+
                             <div>
                                 <label htmlFor="country" className="block text-sm font-medium text-gray-700">
                                     País
@@ -306,7 +302,6 @@ export default function CarritoPage() {
                 </div>
             )}
 
-            {/* Modal de Éxito */}
             {showSuccessModal && orderDetails && (
                 <SuccessModal 
                     isOpen={showSuccessModal} 
